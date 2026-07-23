@@ -690,7 +690,7 @@
       <p class="sucesso-titulo">Dados enviados com sucesso!</p>
       <p class="sucesso-texto">
         Em breve entraremos em contato.<br>
-        Bem-vinda ao time WalkNail!
+        Bora divar juntas! 💅
       </p>
     </div>
 
@@ -720,33 +720,27 @@ async function enviarFormulario() {
 
   if (!nome) { alert('Coloca seu nome pra gente!'); return; }
   if (!wpp) { alert('Precisamos do seu WhatsApp para avisar você!'); return; }
-  if (!email || !email.includes('@')) { alert('E-mail inválido — confere aí!'); return; }
+  if (!email || !email.includes('@') || !email.includes('.')) { alert('E-mail inválido — confere aí!'); return; }
 
   const agora = new Date();
   const dataFormatada = agora.toLocaleDateString('pt-BR') + ' às ' + agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
   const ref = getRef() || 'Direto';
 
-  // Salvar no Airtable
+  // Salvar via Worker (seguro)
   try {
-    await fetch('https://api.airtable.com/v0/appCaeHO5q0WXYuoz/tbl859uVE3oZTx8wp', {
+    await fetch('https://walknail-leads.nikolasmariano3.workers.dev', {
       method: 'POST',
-      headers: {
-        'Authorization': 'Bearer pat4imq1pZn4Ja72G.285624a762401ba7040cec009b7595671af03bff374164e0a550a32c84077474',
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        fields: {
-          'Nome': nome,
-          'WhatsApp': wpp,
-          'Email': email,
-          'Instagram': ig || '',
-          'Canal de Origem': ref,
-          'Data': agora.toISOString().split('T')[0]
-        }
+        nome: nome,
+        wpp: wpp,
+        email: email,
+        ig: ig || '',
+        origem: ref
       })
     });
   } catch(e) {
-    console.error('Erro Airtable:', e);
+    console.error('Erro ao salvar:', e);
   }
 
   document.getElementById('form-container').style.display = 'none';
